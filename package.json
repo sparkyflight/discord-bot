@@ -1,0 +1,41 @@
+{
+	"name": "discord-bot",
+	"version": "0.0.1",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./dist/index",
+		"deploy": "node ./dist/deploy",
+		"tsc": "tsc",
+		"format": "prettier --write .",
+		"test": "jest",
+		"database:generate": "npx prisma generate --schema=./src/Serendipy/schema.prisma",
+		"database:push": "npx prisma db push --schema=./src/Serendipy/schema.prisma",
+		"database:typegen": "npx @kalissaac/prisma-typegen ./src/Serendipy/types/prismaTypes.ts ./src/Serendipy/schema.prisma"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sparkyflight/discord-bot.git"
+	},
+	"author": "Sparkyflight",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/sparkyflight/discord-bot/issues"
+	},
+	"homepage": "https://github.com/sparkyflight/discord-bot#readme",
+	"dependencies": {
+		"@discordjs/builders": "^1.7.0",
+		"@prisma/client": "^5.10.2",
+		"colors": "^1.4.0",
+		"discord.js": "^14.14.1",
+		"dotenv": "^16.4.5",
+		"jest": "^29.7.0",
+		"prettier": "^3.2.4",
+		"util": "^0.12.5"
+	},
+	"devDependencies": {
+		"@types/jest": "^29.5.12",
+		"@types/node": "^20.11.5",
+		"prisma": "^5.9.1"
+	}
+}
