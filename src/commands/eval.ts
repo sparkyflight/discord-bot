@@ -11,6 +11,7 @@ export default {
 		meta: new SlashCommandBuilder()
 			.setName("eval")
 			.setDescription("Evaluate your Code (developers only)"),
+		category: "staff",
 		permissionRequired: "developers.evaluate",
 	},
 	async execute(client, interaction, otherData) {

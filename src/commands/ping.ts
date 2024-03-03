@@ -6,6 +6,7 @@ export default {
 		meta: new SlashCommandBuilder()
 			.setName("ping")
 			.setDescription("Check the bot's ping"),
+		category: "general",
 		permissionRequired: null,
 	},
 	async execute(client, interaction, otherData) {
