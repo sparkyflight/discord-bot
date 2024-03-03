@@ -24,6 +24,9 @@ let DISCORD_SERVER_URI: String = "https://discord.gg/XbJEUs58y4";
 // Create Discord Client
 const client: Client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+    rest: {
+        api: "http://localhost:7852/api"
+    }
 });
 
 // Get files from directory
