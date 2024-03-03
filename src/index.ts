@@ -49,6 +49,7 @@ const commands: Map<
 	{
 		data: {
 			meta: SlashCommandBuilder;
+			category: string;
 			permissionRequired: string | null;
 		};
 		execute: (
