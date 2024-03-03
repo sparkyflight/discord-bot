@@ -145,7 +145,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			try {
 				if (command.data.permissionRequired) {
 					const user = await database.Users.get({
-						userid: interaction.user.id,
+						discord_id: interaction.user.id,
 					});
 
 					if (user) {
@@ -213,7 +213,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		try {
 			if (modal.data.permissionRequired) {
 				const user = await database.Users.get({
-					userid: interaction.user.id,
+					discord_id: interaction.user.id,
 				});
 
 				if (user) {
