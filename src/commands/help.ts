@@ -15,8 +15,9 @@ export default {
 	},
 	async execute(client, interaction, otherData) {
 		const cap = (string: string) =>
-			string.charAt(0).toUpperCase() + string.slice(1);
+			string.charAt(0).toUpperCase() + string.slice(1); // Capitalize first letter
 
+		// Take command map and put it into an array with it sorted by category
 		let categories: {
 			name: string;
 			commands: {
@@ -54,6 +55,7 @@ export default {
 			}
 		});
 
+		// Embed Fields
 		const embedFields: {
 			name: string;
 			value: string;
@@ -63,16 +65,21 @@ export default {
 		categories.forEach((p) => {
 			embedFields.push({
 				name: `${p.name} Commands:`,
-				value: p.commands
-					.map((o) => `\`${o.name}\` - \`${o.description}\``)
-					.join("\n"),
+				value: `- ${p.commands
+					.map((o) => `${o.name} - ${o.description}`)
+					.join("\n- ")}`,
 				inline: true,
 			});
 		});
 
-		const selectMenuOptions = new StringSelectMenuBuilder()
+		// Select Menu Options
+		const categoryMenuOptions = new StringSelectMenuBuilder()
 			.setCustomId("category-select")
-			.setPlaceholder("Select an Category!")
+			.setPlaceholder("Select Category!")
+			.addOptions();
+		const commandMenuOptions = new StringSelectMenuBuilder()
+			.setCustomId("command-select")
+			.setPlaceholder("Select Command!")
 			.addOptions();
 
 		categories.forEach((p) => {
@@ -81,9 +88,19 @@ export default {
 				.setDescription(`Take a look at our ${p.name} commands!`)
 				.setValue(p.name);
 
-			selectMenuOptions.options.push(data);
+			p.commands.map((a) =>
+				commandMenuOptions.options.push(
+					new StringSelectMenuOptionBuilder()
+						.setLabel(a.name)
+						.setDescription(a.description)
+						.setValue(a.name)
+				)
+			);
+
+			categoryMenuOptions.options.push(data);
 		});
 
+		// Reply
 		return await interaction.reply({
 			embeds: [
 				new EmbedBuilder()
@@ -97,7 +114,10 @@ export default {
 					.addFields(embedFields),
 			],
 			components: [
-				new ActionRowBuilder().addComponents(selectMenuOptions) as any,
+				new ActionRowBuilder().addComponents(
+					categoryMenuOptions
+				) as any,
+				new ActionRowBuilder().addComponents(commandMenuOptions) as any,
 			],
 		});
 	},
