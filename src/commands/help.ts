@@ -11,6 +11,7 @@ export default {
 			.setName("help")
 			.setDescription("Need help? Well, look no further!"),
 		category: "general",
+		accountRequired: false,
 		permissionRequired: null,
 	},
 	async execute(client, interaction, otherData) {

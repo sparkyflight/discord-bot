@@ -7,6 +7,7 @@ export default {
 			.setName("about")
 			.setDescription("About Sparkyflight"),
 		category: "general",
+		accountRequired: false,
 		permissionRequired: null,
 	},
 	async execute(client, interaction, otherData) {

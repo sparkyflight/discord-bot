@@ -7,6 +7,7 @@ export default {
 			.setName("ping")
 			.setDescription("Check the bot's ping"),
 		category: "general",
+		accountRequired: false,
 		permissionRequired: null,
 	},
 	async execute(client, interaction, otherData) {

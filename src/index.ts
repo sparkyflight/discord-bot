@@ -24,9 +24,9 @@ let DISCORD_SERVER_URI: String = "https://discord.gg/XbJEUs58y4";
 // Create Discord Client
 const client: Client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-    rest: {
-        api: "http://localhost:7852/api"
-    }
+	rest: {
+		api: "http://localhost:7852/api",
+	},
 });
 
 // Get files from directory
@@ -53,6 +53,7 @@ const commands: Map<
 		data: {
 			meta: SlashCommandBuilder;
 			category: string;
+			accountRequired: boolean;
 			permissionRequired: string | null;
 		};
 		execute: (
@@ -143,11 +144,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			});
 		else
 			try {
-				if (command.data.permissionRequired) {
-					const user = await database.Users.get({
-						discord_id: interaction.user.id,
-					});
+				const user = await database.Users.get({
+					discord_id: interaction.user.id,
+				});
 
+				if (command.data.permissionRequired) {
 					if (user) {
 						if (
 							hasPerm(
@@ -180,7 +181,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
 									.setColor("Random"),
 							],
 						});
-				} else
+				} else if (command.data.accountRequired && !user)
+					await interaction.reply({
+						embeds: [
+							new EmbedBuilder()
+								.setTitle("Oops!")
+								.setDescription(
+									`Sorry, you cannot use this command.\nReason: Sparkyflight account not linked with Discord. Link it by going [**here**](https://sparkyflight.xyz/account).`
+								)
+								.setColor("Random"),
+						],
+					});
+				else
 					await command?.execute(client, interaction, {
 						commands: commands,
 					});
