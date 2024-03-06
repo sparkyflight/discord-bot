@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { EmbedBuilder } from "discord.js";
+import * as database from "../Serendipy/prisma";
 
 export default {
 	data: {
@@ -33,9 +34,7 @@ export default {
 			},
 		];
 
-		const partners = await fetch(
-			"https://api.sparkyflight.xyz/partners/list"
-		).then(async (res) => await res.json());
+		const partners = await database.Partners.getAllPartners();
 
 		return await interaction.reply({
 			embeds: [

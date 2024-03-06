@@ -10,10 +10,10 @@ export default {
 	data: {
 		meta: new SlashCommandBuilder()
 			.setName("eval")
-			.setDescription("Evaluate your Code (developers only)"),
+			.setDescription("Evaluate your Code"),
 		category: "staff",
 		accountRequired: true,
-		permissionRequired: "developers.evaluate",
+		permissionRequired: "administrator.evaluate",
 	},
 	async execute(client, interaction, otherData) {
 		const modal = new ModalBuilder()

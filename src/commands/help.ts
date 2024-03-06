@@ -73,7 +73,7 @@ export default {
 			});
 		});
 
-		// Select Menu Options
+		/* Select Menu Options
 		const categoryMenuOptions = new StringSelectMenuBuilder()
 			.setCustomId("category-select")
 			.setPlaceholder("Select Category!")
@@ -99,7 +99,7 @@ export default {
 			);
 
 			categoryMenuOptions.options.push(data);
-		});
+		});*/
 
 		// Reply
 		return await interaction.reply({
@@ -110,16 +110,16 @@ export default {
 					.setThumbnail("https://sparkyflight.xyz/logo.png")
 					.setColor("Random")
 					.setDescription(
-						"Hello, there. Do you need help with Sparkyflight? Well, look no further! Here are a few commands that you can use to get you started! Or, if you need to create a support ticket; you may run `/support create`."
+						"Hello, there. Do you need help with Sparkyflight? Well, look no further! Here are a few commands that you can use to get you started!"
 					)
 					.addFields(embedFields),
 			],
-			components: [
+			/*components: [
 				new ActionRowBuilder().addComponents(
 					categoryMenuOptions
 				) as any,
 				new ActionRowBuilder().addComponents(commandMenuOptions) as any,
-			],
+			],*/
 		});
 	},
 	async autocomplete(client, interaction) {},
