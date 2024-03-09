@@ -10,7 +10,7 @@ export default {
 		meta: new SlashCommandBuilder()
 			.setName("help")
 			.setDescription("Need help? Well, look no further!"),
-		category: "general",
+		category: "support",
 		accountRequired: false,
 		permissionRequired: null,
 	},

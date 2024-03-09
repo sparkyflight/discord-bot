@@ -2,9 +2,9 @@
 	"name": "discord-bot",
 	"version": "0.0.1",
 	"description": "",
-	"main": "index.js",
+	"main": "sharding.js",
 	"scripts": {
-		"start": "node ./dist/index",
+		"start": "node ./dist/sharding",
 		"deploy": "node ./dist/deploy",
 		"tsc": "tsc",
 		"format": "prettier --write .",

@@ -12,6 +12,7 @@ export default {
 		permissionRequired: null,
 	},
 	async execute(client, interaction, otherData) {
+		// Social Media
 		const social: {
 			name: string;
 			url: string;
@@ -34,8 +35,10 @@ export default {
 			},
 		];
 
+		// Fetch list of partners from the database
 		const partners = await database.Partners.getAllPartners();
 
+		// Reply
 		return await interaction.reply({
 			embeds: [
 				new EmbedBuilder()
@@ -46,23 +49,25 @@ export default {
 					.setDescription(
 						"Hello, there. We are the future of Social Media designed for the neurodiverse community, with a primary focus on individuals on the Autism Spectrum. We aim to provide a safe and inclusive space for people to connect, learn, and communicate about their special interests."
 					)
-					.addFields({
-						name: "Social Media",
-						value: social
-							.map((s) => `[**${s.name}**](${s.url})`)
-							.join("\n"),
-						inline: false,
-					})
-					.addFields({
-						name: "Partners",
-						value: partners
-							.map(
-								(partner) =>
-									`[**${partner.name}**](https://sparkyflight.xyz/partners/${partner.id}) - ${partner.description}`
-							)
-							.join("\n"),
-						inline: false,
-					}),
+					.addFields(
+						{
+							name: "Social Media",
+							value: social
+								.map((s) => `[**${s.name}**](${s.url})`)
+								.join("\n"),
+							inline: true,
+						},
+						{
+							name: "Partners",
+							value: partners
+								.map(
+									(partner) =>
+										`[**${partner.name}**](https://sparkyflight.xyz/partners/${partner.id}) - ${partner.description}`
+								)
+								.join("\n"),
+							inline: true,
+						}
+					),
 			],
 		});
 	},
