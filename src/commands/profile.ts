@@ -14,7 +14,7 @@ export default {
 					.setRequired(false)
 					.setAutocomplete(true)
 			),
-		category: "users",
+		category: "social",
 		accountRequired: true,
 		permissionRequired: null,
 	},

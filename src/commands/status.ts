@@ -1,9 +1,5 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
-import Pagination from "../pagination";
-import {
-	ColorResolvable,
-	EmbedBuilder,
-} from "discord.js";
+import { EmbedBuilder } from "discord.js";
 
 export default {
 	data: {
@@ -15,6 +11,10 @@ export default {
 		permissionRequired: null,
 	},
 	async execute(client, interaction) {
+		const cap = (string: string) =>
+			string.charAt(0).toUpperCase() + string.slice(1); // Capitalize first letter
+
+		// Summary
 		interface Summary {
 			page: {
 				name: string;
@@ -53,107 +53,61 @@ export default {
 			"https://status.purrquinox.com/summary.json"
 		).then(async (res) => await res.json());
 
-		let incidents: EmbedBuilder[] = [];
-		if (summary.activeIncidents)
-			incidents = summary.activeIncidents.map((p) => {
-				let color: ColorResolvable = "Random";
+		// Incidents Embed
+		const Incidents = new EmbedBuilder()
+			.setTitle("Purrquinox Incidents")
+			.setDescription("Here are the current incidents in Purrquinox!")
+			.setURL("https://status.purrquinox.com/")
+			.setThumbnail("https://sparkyflight.xyz/logo.png")
+			.setColor("Red")
+			.addFields(
+				summary.activeIncidents != null
+					? summary.activeIncidents.map((incident) => {
+							return {
+								name: `[${incident.name}](${incident.url})`,
+								value: `Status: ${cap(incident.status.toLowerCase())}\nService(s) Impact: ${cap(incident.impact.toLowerCase())}\nReported: ${incident.started}`,
+								inline: true,
+							};
+						})
+					: [
+							{
+								name: "No active incidents",
+								value: "There are currently no active incidents!",
+								inline: true,
+							},
+						]
+			);
 
-				switch (p.impact) {
-					case "OPERATIONAL":
-						color = "Green";
-						break;
+		// Maintenances Embed
+		const Maintenances = new EmbedBuilder()
+			.setTitle("Purrquinox Maintenances")
+			.setDescription(
+				"Here are the current/scheduled maintenances in Purrquinox!"
+			)
+			.setURL("https://status.purrquinox.com/")
+			.setThumbnail("https://sparkyflight.xyz/logo.png")
+			.setColor("Orange")
+			.addFields(
+				summary.activeMaintenances != null
+					? summary.activeMaintenances.map((maint) => {
+							return {
+								name: `[${maint.name}](${maint.url})`,
+								value: `Status: ${cap(maint.status.toLowerCase())}\nStart Date: ${maint.start}\nDuration: ${maint.duration} minutes`,
+								inline: true,
+							};
+						})
+					: [
+							{
+								name: "No maintenances",
+								value: "There are currently no active/scheduled maintenances in Purrquinox!",
+								inline: true,
+							},
+						]
+			);
 
-					case "PARTIALOUTAGE":
-						color = "Yellow";
-						break;
-
-					case "MINOROUTAGE":
-						color = "Orange";
-						break;
-
-					case "MAJOROUTAGE":
-						color = "Red";
-						break;
-
-					default:
-						color = "Random";
-						break;
-				}
-
-				return new EmbedBuilder()
-					.setTitle(`${p.name} [INCIDENT]`)
-					.setURL(p.url)
-					.setThumbnail("https://sparkyflight.xyz/logo.png")
-					.setColor(color)
-					.setFields(
-						{
-							name: "Current Status",
-							value: p.status,
-							inline: true,
-						},
-						{
-							name: "Started",
-							value: p.started,
-							inline: true,
-						}
-					);
-			});
-
-		let maintenances: EmbedBuilder[] = [];
-		if (summary.activeMaintenances)
-			maintenances = summary.activeMaintenances.map((p) => {
-				let color: ColorResolvable = "Random";
-
-				switch (p.status) {
-					case "NOTSTARTEDYET":
-						color = "Grey";
-						break;
-
-					case "INPROGRESS":
-						color = "Red";
-						break;
-
-					case "COMPLETED":
-						color = "Green";
-						break;
-
-					default:
-						color = "Random";
-						break;
-				}
-
-				return new EmbedBuilder()
-					.setTitle(`${p.name} [MAINTENANCE]`)
-					.setURL(p.url)
-					.setThumbnail("https://sparkyflight.xyz/logo.png")
-					.setColor(color)
-					.setFields(
-						{
-							name: "Current Status",
-							value: p.status,
-							inline: true,
-						},
-						{
-							name: "Started",
-							value: p.start,
-							inline: true,
-						},
-						{
-							name: "Duration",
-							value: `${p.duration} minutes`,
-							inline: true,
-						}
-					);
-			});
-
-		let pages: EmbedBuilder[] = [...incidents, ...maintenances];
-
-		if (pages.length === 0)
-			return await interaction.reply({
-				content:
-					"All of our services are online, without any scheduled maintenances!",
-			});
-		else return await Pagination(interaction, pages, []);
+		await interaction.reply({
+			embeds: [Incidents, Maintenances],
+		});
 	},
 	async autocomplete(client, interaction) {},
 };

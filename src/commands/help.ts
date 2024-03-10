@@ -1,5 +1,6 @@
 import { ActionRowBuilder, SlashCommandBuilder } from "@discordjs/builders";
 import {
+	ComponentType,
 	EmbedBuilder,
 	StringSelectMenuBuilder,
 	StringSelectMenuOptionBuilder,
@@ -66,21 +67,17 @@ export default {
 		categories.forEach((p) => {
 			embedFields.push({
 				name: `${p.name} Commands:`,
-				value: `- ${p.commands
-					.map((o) => `${o.name} - ${o.description}`)
-					.join("\n- ")}`,
+				value: `${p.commands
+					.map((o) => `- ${o.name} - ${o.description}`)
+					.join("\n")}`,
 				inline: true,
 			});
 		});
 
-		/* Select Menu Options
+		// Select Menu Options
 		const categoryMenuOptions = new StringSelectMenuBuilder()
 			.setCustomId("category-select")
 			.setPlaceholder("Select Category!")
-			.addOptions();
-		const commandMenuOptions = new StringSelectMenuBuilder()
-			.setCustomId("command-select")
-			.setPlaceholder("Select Command!")
 			.addOptions();
 
 		categories.forEach((p) => {
@@ -89,20 +86,11 @@ export default {
 				.setDescription(`Take a look at our ${p.name} commands!`)
 				.setValue(p.name);
 
-			p.commands.map((a) =>
-				commandMenuOptions.options.push(
-					new StringSelectMenuOptionBuilder()
-						.setLabel(a.name)
-						.setDescription(a.description)
-						.setValue(a.name)
-				)
-			);
-
 			categoryMenuOptions.options.push(data);
-		});*/
+		});
 
 		// Reply
-		return await interaction.reply({
+		const resp = await interaction.reply({
 			embeds: [
 				new EmbedBuilder()
 					.setTitle("Sparkyflight Help")
@@ -114,12 +102,50 @@ export default {
 					)
 					.addFields(embedFields),
 			],
-			/*components: [
+			components: [
 				new ActionRowBuilder().addComponents(
 					categoryMenuOptions
 				) as any,
-				new ActionRowBuilder().addComponents(commandMenuOptions) as any,
-			],*/
+			],
+		});
+
+		const collector = resp.createMessageComponentCollector({
+			componentType: ComponentType.StringSelect,
+			time: 3_600_000,
+		});
+
+		collector.on("collect", async (i) => {
+			const selection = i.values[0];
+			const category = categories.find((p) => p.name === selection);
+
+			if (!category)
+				return await i.reply({
+					content: "Please select a valid category!",
+					ephemeral: true,
+				});
+			else {
+				const embed = new EmbedBuilder()
+					.setTitle(`${i.values[0]} Help`)
+					.setURL("https://sparkyflight.xyz/")
+					.setThumbnail("https://sparkyflight.xyz/logo.png")
+					.setColor("Random")
+					.setDescription(
+						`Hey, there! Almost missed ya. Let's try to get you some help with our ${i.values[0]} commands!`
+					)
+					.addFields(
+						category.commands.map((p) => {
+							return {
+								name: p.name,
+								value: `Description: ${p.description}\nPermission Required: \`${p.permissionRequired || "None"}\``,
+								inline: true,
+							};
+						})
+					);
+
+				await resp.edit({
+					embeds: [embed],
+				});
+			}
 		});
 	},
 	async autocomplete(client, interaction) {},
