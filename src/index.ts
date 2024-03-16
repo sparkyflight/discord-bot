@@ -14,6 +14,9 @@ import {
 	codeBlock,
 	ModalSubmitInteraction,
 	AutocompleteInteraction,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
 } from "discord.js";
 import { debug, info, error } from "./Serendipy/logger.js";
 import "dotenv/config";
@@ -25,7 +28,10 @@ let DISCORD_SERVER_URI: String = "https://discord.gg/XbJEUs58y4";
 const client: Client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 	rest: {
-		api: "http://localhost:7852/api",
+		api:
+			process.env.PROXY_DISABLED === "false"
+				? "http://localhost:7852/api"
+				: "https://discord.com/api",
 	},
 });
 
@@ -181,18 +187,26 @@ client.on(Events.InteractionCreate, async (interaction) => {
 									.setColor("Random"),
 							],
 						});
-				} else if (command.data.accountRequired && !user)
+				} else if (command.data.accountRequired && !user) {
+					const row = new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setLabel("Link Account")
+							.setStyle(ButtonStyle.Link)
+							.setURL("https://sparkyflight.xyz/account/link/discord")
+					);
+
 					await interaction.reply({
 						embeds: [
 							new EmbedBuilder()
 								.setTitle("Oops!")
 								.setDescription(
-									`Sorry, you cannot use this command.\nReason: Sparkyflight account not linked with Discord. Link it by going [**here**](https://sparkyflight.xyz/account).`
+									`Sorry, you cannot use this command.\nReason: Sparkyflight account not linked with Discord.`
 								)
 								.setColor("Random"),
 						],
+						components: [row as any],
 					});
-				else
+				} else
 					await command?.execute(client, interaction, {
 						commands: commands,
 					});
