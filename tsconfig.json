@@ -11,5 +11,5 @@
 		"skipLibCheck": true /* Skip type checking all .d.ts files. */
 	},
 	"include": ["src/**/*"],
-    "exclude": ["src/gateway-proxy/*", "src/nirn-proxy/*"]
+	"exclude": ["src/gateway-proxy/*", "src/nirn-proxy/*"]
 }

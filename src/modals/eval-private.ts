@@ -4,7 +4,7 @@ import * as util from "util";
 export default {
 	data: {
 		name: "eval-private",
-		permissionRequired: "developers.evaluate",
+		permissionRequired: "administrator.evaluate",
 	},
 	async execute(client, interaction) {
 		const code = interaction.fields.getTextInputValue("code");

@@ -14,6 +14,9 @@ import {
 	codeBlock,
 	ModalSubmitInteraction,
 	AutocompleteInteraction,
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
 } from "discord.js";
 import { debug, info, error } from "./Serendipy/logger.js";
 import "dotenv/config";
@@ -24,9 +27,12 @@ let DISCORD_SERVER_URI: String = "https://discord.gg/XbJEUs58y4";
 // Create Discord Client
 const client: Client = new Client({
 	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-    rest: {
-        api: "http://localhost:7852/api"
-    }
+	rest: {
+		api:
+			process.env.PROXY_DISABLED === "false"
+				? "http://localhost:7852/api"
+				: "https://discord.com/api",
+	},
 });
 
 // Get files from directory
@@ -53,6 +59,7 @@ const commands: Map<
 		data: {
 			meta: SlashCommandBuilder;
 			category: string;
+			accountRequired: boolean;
 			permissionRequired: string | null;
 		};
 		execute: (
@@ -143,11 +150,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			});
 		else
 			try {
-				if (command.data.permissionRequired) {
-					const user = await database.Users.get({
-						userid: interaction.user.id,
-					});
+				const user = await database.Users.get({
+					discord_id: interaction.user.id,
+				});
 
+				if (command.data.permissionRequired) {
 					if (user) {
 						if (
 							hasPerm(
@@ -180,6 +187,25 @@ client.on(Events.InteractionCreate, async (interaction) => {
 									.setColor("Random"),
 							],
 						});
+				} else if (command.data.accountRequired && !user) {
+					const row = new ActionRowBuilder().addComponents(
+						new ButtonBuilder()
+							.setLabel("Link Account")
+							.setStyle(ButtonStyle.Link)
+							.setURL("https://sparkyflight.xyz/account/link/discord")
+					);
+
+					await interaction.reply({
+						embeds: [
+							new EmbedBuilder()
+								.setTitle("Oops!")
+								.setDescription(
+									`Sorry, you cannot use this command.\nReason: Sparkyflight account not linked with Discord.`
+								)
+								.setColor("Random"),
+						],
+						components: [row as any],
+					});
 				} else
 					await command?.execute(client, interaction, {
 						commands: commands,
@@ -213,7 +239,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		try {
 			if (modal.data.permissionRequired) {
 				const user = await database.Users.get({
-					userid: interaction.user.id,
+					discord_id: interaction.user.id,
 				});
 
 				if (user) {

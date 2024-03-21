@@ -2,3 +2,9 @@
 	path = src/Serendipy
 	url = https://github.com/sparkyflight/Serendipy
     branch = production
+[submodule "src/nirn-proxy"]
+	path = src/nirn-proxy
+	url = https://github.com/Purrquinox/nirn-proxy
+[submodule "src/gateway-proxy"]
+	path = src/gateway-proxy
+	url = https://github.com/Purrquinox/gateway-proxy
